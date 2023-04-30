@@ -1,18 +1,28 @@
 package com.example.studentsolution;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class create_account extends AppCompatActivity {
     private EditText etName, etSurname , etInstitution , etStudentNumber , etEmail ,etPassword ,etConfirmPAssword;
     private Button createAccountbtn;
     private TextView loginText;
+    private ProgressDialog progressDialog;
+    FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +39,9 @@ public class create_account extends AppCompatActivity {
         etConfirmPAssword= findViewById(R.id.confirmpasswordId);
         createAccountbtn =(Button) findViewById(R.id.accountBtnId);
         loginText = findViewById(R.id.loginTextviewId);
+        progressDialog = new ProgressDialog(this);
+        mAuth = FirebaseAuth.getInstance();
+
 
 
 
@@ -121,6 +134,26 @@ public class create_account extends AppCompatActivity {
         }
         else {
             //the firebase registration steps
+            progressDialog.setMessage("Registration in progress");
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.show();
+
+            mAuth.createUserWithEmailAndPassword(email , password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if(task.isSuccessful()){
+                        //take to main activity
+                        Intent mainActivity = new Intent(create_account.this,MainActivity.class);
+                        startActivity(mainActivity);
+                    }
+                    else {
+                        Toast.makeText(create_account.this, "Registration failde please try again ", Toast.LENGTH_SHORT).show();
+                    }
+                    progressDialog.dismiss();
+                }
+            });
+
+
         }
 
 

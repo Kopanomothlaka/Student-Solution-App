@@ -1,18 +1,31 @@
 package com.example.studentsolution;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 
 public class login extends AppCompatActivity {
      EditText emailEditText , passwordEditextText;
     private Button loginButton;
     TextView forgotPassTextView , createAccTextView;
+    FirebaseAuth auth;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +37,8 @@ public class login extends AppCompatActivity {
         loginButton = (Button) findViewById(R.id.loginBtnID);
         forgotPassTextView = findViewById(R.id.forgotPassTextViewId);
         createAccTextView = findViewById(R.id.createAccTextviewID);
+        auth = FirebaseAuth.getInstance();
+        progressDialog = new ProgressDialog(this);
 
         forgotPassTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,6 +79,40 @@ public class login extends AppCompatActivity {
         }
         else {
             //FIrebase sign in code here
+            progressDialog.setMessage("Logging in.....");
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.show();
+            auth.signInWithEmailAndPassword(email , password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if(task.isSuccessful()){
+                        Intent taketomain = new Intent(login.this, MainActivity.class);
+                        startActivity(taketomain);
+                        finish();
+                    }
+                    else {
+
+                        if (task.getException() instanceof FirebaseAuthInvalidUserException){
+                            Toast.makeText(login.this, "Uer does not exist", Toast.LENGTH_SHORT).show();
+                        }
+                        else if (task.getException() instanceof FirebaseAuthInvalidCredentialsException
+                                && task.getException().getMessage().equals("The password is invalid or the user does not have a password.")) {
+                            Toast.makeText(login.this, "Invalid password.",
+                                    Toast.LENGTH_SHORT).show();
+                        } else if (task.getException() instanceof FirebaseAuthUserCollisionException
+                                && ((FirebaseAuthUserCollisionException) task.getException()).getErrorCode().equals("ERROR_EMAIL_ALREADY_IN_USE")) {
+                            Toast.makeText(login.this, "Email is already taken.",
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(login.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+
+
+                    }
+                    progressDialog.dismiss();
+                }
+            });
         }
 
     }
