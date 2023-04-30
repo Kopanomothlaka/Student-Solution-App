@@ -64,6 +64,7 @@
             android:layout_gravity="center"/>
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/openpassactivityId"
             android:layout_width="match_parent"
             android:layout_height="130dp"
             android:layout_margin="15dp"
@@ -103,6 +104,7 @@
 
         </androidx.cardview.widget.CardView>
         <androidx.cardview.widget.CardView
+            android:id="@+id/openstudentcardId"
             android:layout_width="match_parent"
             android:layout_height="130dp"
             android:layout_margin="15dp"
@@ -142,6 +144,7 @@
 
         </androidx.cardview.widget.CardView>
         <androidx.cardview.widget.CardView
+            android:id="@+id/openmystuffId"
             android:layout_width="match_parent"
             android:layout_height="130dp"
             android:layout_margin="15dp"
@@ -180,6 +183,7 @@
 
         </androidx.cardview.widget.CardView>
         <androidx.cardview.widget.CardView
+            android:id="@+id/openstolengoodsId"
             android:layout_width="match_parent"
             android:layout_height="130dp"
             android:layout_margin="15dp"
